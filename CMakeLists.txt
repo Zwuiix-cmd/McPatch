@@ -20,10 +20,14 @@ set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--strip-all")
 
 add_compile_definitions(_ITERATOR_DEBUG_LEVEL=0)
 
-add_executable(McPatch main.cpp
+add_executable(McPatch WIN32 main.cpp
         src/utils/Game.h
         src/utils/Logger.h
-        src/utils/Logger.h)
+        src/utils/Logger.h
+        src/SDK/SDK.hpp
+        src/utils/json.hpp
+        src/utils/Internet.h
+        src/Form/FormMenu.hpp)
 
 
 FetchContent_Declare(
@@ -40,5 +44,5 @@ endif()
 message("-- Downloaded Rang")
 
 target_link_libraries(McPatch PRIVATE rang)
-
+target_link_libraries(McPatch PRIVATE "C:/Program Files (x86)/Windows Kits/10/Lib/10.0.26100.0/um/x64/wininet.lib")
 target_link_libraries(McPatch PRIVATE Psapi)

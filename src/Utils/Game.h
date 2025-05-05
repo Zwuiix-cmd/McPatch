@@ -13,7 +13,6 @@ public:
         return GetProcess() != nullptr;
     }
 
-
     inline static void kill() {
         HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
         if (hSnapshot == INVALID_HANDLE_VALUE) return;
@@ -35,6 +34,41 @@ public:
         CloseHandle(hSnapshot);
     }
 
+    inline static std::string getVersion() {
+        HKEY hKey;
+        const char* subKey = "Software\\Classes\\Local Settings\\Software\\Microsoft\\Windows\\CurrentVersion\\AppModel\\Repository\\Packages";
+        const char* packagePrefix = "Microsoft.MinecraftUWP_";
+
+        if (RegOpenKeyExA(HKEY_CURRENT_USER, subKey, 0, KEY_READ, &hKey) != ERROR_SUCCESS)
+            return "Unknown";
+
+        char name[256];
+        DWORD index = 0;
+        DWORD nameSize = sizeof(name);
+
+        while (RegEnumKeyExA(hKey, index++, name, &nameSize, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
+            if (strncmp(name, packagePrefix, strlen(packagePrefix)) == 0) {
+                std::string full = name;
+                size_t start = full.find('_') + 1;
+                size_t end = full.find('_', start);
+                if (start != std::string::npos && end != std::string::npos)
+                    return full.substr(start, end - start);
+            }
+            nameSize = sizeof(name);
+        }
+
+        RegCloseKey(hKey);
+        return "Unknown";
+    }
+
+    static std::string getShortPath(size_t maxLength = 40) {
+        std::string path = getPath();
+        if (path.length() <= maxLength) return path;
+
+        std::string ellipsis = "...";
+        size_t charsToShow = maxLength - ellipsis.length();
+        return ellipsis + path.substr(path.length() - charsToShow);
+    }
 
     static std::string getPath() {
         HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
