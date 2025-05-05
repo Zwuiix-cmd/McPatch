@@ -1,0 +1,7 @@
+{
+  "GuiScale": "00 00 ? ? 00 00 A0 40 00 00 C0 40",
+  "TeleportRotation": "E8 ? ? ? ? 48 8B 03 48 8D 94 24 ? ? ? ? 48 8B 4B",
+  "ItemUseDelay": "FF 15 ? ? ? ? 48 8B ? 48 8B ? 48 8B ? ? ? ? ? FF 15 ? ? ? ? 32 DB",
+  "MinimalViewBobbing": "FF 15 ? ? ? ? 80 7C 24 60 ? 0F 84 ? ? ? ? 48 89",
+  "NoHurtCam": "76 0E F3 0F 5C C7"
+}
