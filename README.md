@@ -8,14 +8,15 @@
 
 > Each patch is based on a unique byte signature and is applied directly to the game executable.
 
-| Patch                  | Description                                                                 |
-|------------------------|-----------------------------------------------------------------------------|
-| **GuiScale**           | Forces a smaller GUI scale for better visibility on low-resolution screens. |
-| **TeleportRotation**   | Disables the camera snap/rotation that occurs during teleportation.         |
-| **ItemUseDelay**       | Removes or reduces delay between item uses.                                 |
-| **MinimalViewBobbing** | Disables camera bobbing when walking.                                       |
-| **NoHurtCam**          | Removes the screen shake when taking damage.                                |
-| **NoJumpDelay**        | Eliminates delay between consecutive jumps.                                 |
+| Patch                  | Description                                                                                                |
+|------------------------|------------------------------------------------------------------------------------------------------------|
+| **GuiScale**           | Forces a smaller GUI scale for better visibility on low-resolution screens.                                |
+| **TeleportRotation**   | Disables the camera snap/rotation that occurs during teleportation.                                        |
+| **ItemUseDelay**       | Removes or reduces delay between item uses.                                                                |
+| **MinimalViewBobbing** | Disables camera bobbing when walking.                                                                      |
+| **NoHurtCam**          | Removes the screen shake when taking damage.                                                               |
+| **NoJumpDelay**        | Eliminates delay between consecutive jumps.                                                                |
+| **PlayScreenFix**      | Replaces the new PlayScreen with the old one.  (Thanks [@alteik](https://github.com/alteik/PlayScreenFix)) |
 
 ---
 
@@ -38,7 +39,8 @@ Patch signatures are hexadecimal byte sequences used to locate the relevant inst
   "ItemUseDelay": "FF 15 ? ? ? ? 48 8B ? 48 8B ? 48 8B ? ? ? ? ? FF 15 ? ? ? ? 32 DB",
   "MinimalViewBobbing": "FF 15 ? ? ? ? 80 7C 24 60 ? 0F 84 ? ? ? ? 48 89",
   "NoHurtCam": "76 0E F3 0F 5C C7",
-  "NoJumpDelay": "C7 47 ? ? ? ? ? 48 8B 9C 24 ? ? ? ? 0F 28 74 24 ? 48 81 C4"
+  "NoJumpDelay": "C7 47 ? ? ? ? ? 48 8B 9C 24 ? ? ? ? 0F 28 74 24 ? 48 81 C4",
+  "PlayScreenFix": "6D 63 2D 61 62 2D 6E 65 77 2D 70 6C 61 79 2D 73 63 72 65 65 6E 2D"
 }
 ```
 
