@@ -77,19 +77,45 @@ bool patchExe(const std::string& inputFile, const std::string& outputFile, const
         const std::vector<int>& replacement = patchData.second;
 
         std::vector<int> signature = parseSignature(signatureStr);
-        size_t pos = findSignature(fileData, signature);
-        if (pos == std::string::npos) {
-            Logger::log("File", "Signature &c" + key + "&r not found.");
-            continue;
-        }
 
-        for (size_t i = 0; i < replacement.size(); ++i) {
-            if (replacement[i] != -1) {
-                fileData[pos + i] = replacement[i];
+        bool foundAny = false;
+
+        if (key == "PlayScreenFix") {
+            size_t searchStart = 0;
+            while (searchStart < fileData.size()) {
+                size_t pos = findSignature(fileData, signature);
+                if (pos == std::string::npos) break;
+
+                foundAny = true;
+                for (size_t i = 0; i < replacement.size(); ++i) {
+                    if (replacement[i] != -1) {
+                        fileData[pos + i] = replacement[i];
+                    }
+                }
+
+                searchStart = pos + 1;
             }
+        } else {
+            size_t pos = findSignature(fileData, signature);
+            if (pos == std::string::npos) {
+                Logger::log("File", "Signature &c" + key + "&r not found.");
+                continue;
+            }
+
+            for (size_t i = 0; i < replacement.size(); ++i) {
+                if (replacement[i] != -1) {
+                    fileData[pos + i] = replacement[i];
+                }
+            }
+
+            Logger::log("File", "Signature &c" + key + "&r found");
         }
 
-        Logger::log("File", "Signature &c" + key + "&r found.");
+        if (key == "PlayScreenFix") {
+            foundAny ?
+            Logger::log("File", "Signature &c" + key + "&r found") :
+            Logger::log("File", "Signature &c" + key + "&r not found.");
+        }
     }
 
     auto patchEnd = std::chrono::high_resolution_clock::now();
