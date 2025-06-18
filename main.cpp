@@ -4,11 +4,16 @@
 #include <vector>
 #include <windows.h>
 #include <chrono>
+#include <tlhelp32.h>
+#include <algorithm>
+#include <appmodel.h>
 
 #include "src/Form/FormMenu.hpp"
 #include "src/SDK/SDK.hpp"
 #include "src/Utils/Game.h"
 #include "src/Utils/Logger.h"
+
+const std::string target = "mc-ab-new-play-screen-";
 
 void CreateConsole() {
     AllocConsole();
@@ -77,45 +82,19 @@ bool patchExe(const std::string& inputFile, const std::string& outputFile, const
         const std::vector<int>& replacement = patchData.second;
 
         std::vector<int> signature = parseSignature(signatureStr);
-
-        bool foundAny = false;
-
-        if (key == "PlayScreenFix") {
-            size_t searchStart = 0;
-            while (searchStart < fileData.size()) {
-                size_t pos = findSignature(fileData, signature);
-                if (pos == std::string::npos) break;
-
-                foundAny = true;
-                for (size_t i = 0; i < replacement.size(); ++i) {
-                    if (replacement[i] != -1) {
-                        fileData[pos + i] = replacement[i];
-                    }
-                }
-
-                searchStart = pos + 1;
-            }
-        } else {
-            size_t pos = findSignature(fileData, signature);
-            if (pos == std::string::npos) {
-                Logger::log("File", "Signature &c" + key + "&r not found.");
-                continue;
-            }
-
-            for (size_t i = 0; i < replacement.size(); ++i) {
-                if (replacement[i] != -1) {
-                    fileData[pos + i] = replacement[i];
-                }
-            }
-
-            Logger::log("File", "Signature &c" + key + "&r found");
-        }
-
-        if (key == "PlayScreenFix") {
-            foundAny ?
-            Logger::log("File", "Signature &c" + key + "&r found") :
+        size_t pos = findSignature(fileData, signature);
+        if (pos == std::string::npos) {
             Logger::log("File", "Signature &c" + key + "&r not found.");
+            continue;
         }
+
+        for (size_t i = 0; i < replacement.size(); ++i) {
+            if (replacement[i] != -1) {
+                fileData[pos + i] = replacement[i];
+            }
+        }
+
+        Logger::log("File", "Signature &c" + key + "&r found");
     }
 
     auto patchEnd = std::chrono::high_resolution_clock::now();
@@ -167,6 +146,111 @@ void applyStyles() {
     SetConsoleMode(hConsole, mode);
 }
 
+static int getMinecraftPID()
+{
+    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    PROCESSENTRY32 process;
+    process.dwSize = sizeof(process);
+
+    if (Process32First(snapshot, &process))
+    {
+        do
+        {
+            if (strcmp(process.szExeFile, "Minecraft.Windows.exe") == 0)
+            {
+                CloseHandle(snapshot);
+                return process.th32ProcessID;
+            }
+        } while (Process32Next(snapshot, &process));
+    }
+
+    CloseHandle(snapshot);
+    return 0;
+}
+
+std::wstring PackageFullNameFromFamilyName(std::wstring familyName)
+{
+    std::wstring fullName;
+    UINT32 count = 0;
+    UINT32 length = 0;
+
+    // First call gets the count and length; PACKAGE_FILTER_HEAD tells Windows to query Application Packages
+    LONG status = FindPackagesByPackageFamily(familyName.c_str(), PACKAGE_FILTER_HEAD, &count, nullptr, &length, nullptr, nullptr);
+    if (status == ERROR_SUCCESS || status != ERROR_INSUFFICIENT_BUFFER)
+        return fullName;
+
+    PWSTR* fullNames = (PWSTR*)malloc(count * sizeof(*fullNames));
+    PWSTR buffer = (PWSTR)malloc(length * sizeof(WCHAR));
+    UINT32* properties = (UINT32*)malloc(count * sizeof(*properties));
+
+
+    if (buffer == nullptr || fullNames == nullptr || properties == nullptr)
+        goto Cleanup;
+
+
+    // Second call gets all fullNames
+    // buffer and properties are needed even though they're never used
+    status = FindPackagesByPackageFamily(familyName.c_str(), PACKAGE_FILTER_HEAD, &count, fullNames, &length, buffer, properties);
+    if (status != ERROR_SUCCESS)
+        goto Cleanup;
+    else
+        fullName = std::wstring(fullNames[0]); // Get the first activatable package found; usually there is only one anyway
+
+Cleanup:
+    if (properties != nullptr)
+        free(properties);
+    if (buffer != nullptr)
+        free(buffer);
+    if (fullNames != nullptr)
+        free(fullNames);
+
+
+    return fullName;
+}
+
+std::wstring GetPackagePath(const std::wstring& packageFullName)
+{
+    UINT32 pathLength = 0;
+    LONG rc = GetPackagePathByFullName(packageFullName.c_str(), &pathLength, NULL);
+    if (rc != ERROR_INSUFFICIENT_BUFFER && rc != ERROR_MORE_DATA)
+        return L"";
+    wchar_t* pathBuffer = new wchar_t[pathLength];
+    rc = GetPackagePathByFullName(packageFullName.c_str(), &pathLength, pathBuffer);
+    if (rc != ERROR_SUCCESS)
+        return L"";
+
+    return pathBuffer;
+}
+
+bool patchScreenFix(const std::string& path)
+{
+    std::ifstream file(path, std::ios::binary | std::ios::ate);
+    std::vector<char> data(file.tellg());
+    file.seekg(0);
+    file.read(data.data(), data.size());
+    file.close();
+
+    size_t targetLength = target.size();
+    bool found = false;
+
+    for (size_t i = 0; i <= data.size() - targetLength; i++)
+    {
+        if (std::equal(data.begin() + i, data.begin() + i + targetLength, target.begin()))
+        {
+            std::fill(data.begin() + i, data.begin() + i + targetLength, ' ');
+            found = true;
+            i += targetLength - 1;
+        }
+    }
+
+    if (!found) return false;
+
+    std::ofstream outFile(path, std::ios::binary);
+    outFile.write(data.data(), data.size());
+
+    return true;
+}
+
 int main() {
     applyStyles();
 
@@ -202,11 +286,19 @@ int main() {
 
     std::unordered_map<std::string, std::pair<std::string, std::vector<int>>> patches = {};
 
+    bool screenFix = false;
+
     for (size_t i = 0; i < options.size(); ++i) {
         if (result[i]) {
             std::string key = options[i];
-            patches[key] = std::make_pair(SDK::getSig(key), SDK::getPatch(key));
+            if(key == "PlayScreenFix") {
+                screenFix = true;
+            } else patches[key] = std::make_pair(SDK::getSig(key), SDK::getPatch(key));
         }
+    }
+
+    if(screenFix) {
+        patchScreenFix(path);
     }
 
     if (patchExe(path, path, "Minecraft.Windows." + version + ".exe", patches)) {
