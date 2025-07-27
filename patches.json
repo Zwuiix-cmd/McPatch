@@ -4,6 +4,7 @@
   "ItemUseDelay": "90 90 90 90 90 90",
   "MinimalViewBobbing": "90 90 90 90 90 90",
   "NoHurtCam": "90 90",
+  "ThirdPersonNametag": "90 90 90 90 90 90",
   "NoJumpDelay": "C7 47 10 00 00 00 00",
   "PlayScreenFix": "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20"
 }
