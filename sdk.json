@@ -3,7 +3,8 @@
   "TeleportRotation": "E8 ? ? ? ? 48 8B 03 48 8D 94 24 ? ? ? ? 48 8B 4B",
   "ItemUseDelay": "FF 15 ? ? ? ? 48 8B ? 48 8B ? 48 8B ? ? ? ? ? FF 15 ? ? ? ? 32 DB",
   "MinimalViewBobbing": "FF 15 ? ? ? ? 80 7C 24 60 ? 0F 84 ? ? ? ? 48 89",
-  "NoJumpDelay": "C7 47 ? ? ? ? ? 48 8B 9C 24 ? ? ? ? 0F 28 74 24 ? 48 81 C4",
+  "NoJumpDelay (LATEST)": "C7 47 ? ? ? ? ? 48 8B 9C 24 ? ? ? ? 0F 28 74 24 ? 48 81 C4",
+  "NoJumpDelay (1.16.100.4)": "89 90 ? ? ? ? c3 cc cc cc cc cc 48 8b 41 ? 88 90 ? ? ? ? c3 cc cc cc cc cc 48 8b 49 ? e9 ? ? ? ? cc cc cc cc cc cc cc 48 8b 49",
   "PlayScreenFix": "6D 63 2D 61 62 2D 6E 65 77 2D 70 6C 61 79 2D 73 63 72 65 65 6E 2D",
   "NoHurtCam": "eb ? 0f 57 c0 f3 0f 11 0b",
   "ThirdPersonNametag": "0f 84 ? ? ? ? 49 8b 45 ? 49 8b cd 48 8b 80 ? ? ? ? ff 15 ? ? ? ? 84 c0 0f 85"
