@@ -1,7 +1,8 @@
 {
   "GuiScale": "00 00 E0",
   "TeleportRotation": "90 90 90 90 90",
-  "ItemUseDelay": "90 90 90 90 90 90",
+  "ItemUseDelay (LATEST)": "90 90 90 90 90 90",
+  "ItemUseDelay (1.16.100.4)": "90 90 90 90 90 90 90",
   "MinimalViewBobbing": "90 90 90 90 90 90",
   "NoHurtCam": "90 90",
   "ThirdPersonNametag": "90 90 90 90 90 90",
