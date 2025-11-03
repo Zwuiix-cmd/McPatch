@@ -1,4 +1,5 @@
-# McPatch
+# McPatch - Discontinued for now
+This project will no longer be updated, but it still works for versions prior to 1.21.114.
 
 **McPatch** is a utility tool designed to apply byte-level patches to the **Minecraft: Bedrock Edition** executable. This project is a community-maintained version of the original patcher by *VastraKai*, which has since been removed from GitHub.
 
