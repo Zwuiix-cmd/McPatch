@@ -1,4 +1,4 @@
-## Discontinued for now
+# Discontinued for now
 This project will no longer be updated, but it still works for versions prior to 1.21.114.
 
 ## McPatch
