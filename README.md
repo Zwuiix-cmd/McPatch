@@ -1,11 +1,13 @@
-# McPatch - Discontinued for now
+## Discontinued for now
 This project will no longer be updated, but it still works for versions prior to 1.21.114.
+
+## McPatch
 
 **McPatch** is a utility tool designed to apply byte-level patches to the **Minecraft: Bedrock Edition** executable. This project is a community-maintained version of the original patcher by *VastraKai*, which has since been removed from GitHub.
 
 ---
 
-## Current Features
+### Current Features
 
 > Each patch is based on a unique byte signature and is applied directly to the game executable.
 
@@ -21,7 +23,7 @@ This project will no longer be updated, but it still works for versions prior to
 
 ---
 
-## Download
+### Download
 
  [**Download the latest release here**](https://github.com/Zwuiix-cmd/McPatch/releases/download/latest/McPatch.exe)
 
@@ -29,7 +31,7 @@ Compatible with the latest versions of **Minecraft Bedrock** (requires `.exe` ex
 
 ---
 
-## 🔧 Example Patch Signatures
+### 🔧 Example Patch Signatures
 
 Patch signatures are hexadecimal byte sequences used to locate the relevant instructions in the executable:
 
@@ -49,7 +51,7 @@ Wildcards (`?`) allow for flexible matching across different Minecraft builds.
 
 ---
 
-## How It Works
+#### How It Works
 
 1. The patcher scans the game executable for the defined byte signature.
 2. It replaces bytes at the found location with the custom patch.
@@ -57,7 +59,7 @@ Wildcards (`?`) allow for flexible matching across different Minecraft builds.
 
 ---
 
-## Contributing
+### Contributing
 
 Want to help improve the tool?
 
@@ -69,14 +71,14 @@ All contributions are welcome!
 
 ---
 
-##  Disclaimer
+### Disclaimer
 
 Use at your own risk.
 This tool modifies the game binary directly and could trigger anti-cheat systems in multiplayer environments.
 
 ---
 
-## License
+### License
 
 This project is open-source under the [MIT License](https://opensource.org/licenses/MIT).
 
